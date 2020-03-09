@@ -59,15 +59,14 @@ app.get("/users/:id", (req, res) => {
 // STEP 6.7 build a [POST] on "/users"
 // to create a new user using the body of the request
 app.post("/users", async (req, res) => {
-  // when a client does
-  // axios.post('http://localhost:3333/users', user).then().catch()
-
   const payload = req.body;
   helpers
     .insert(payload)
     .then(user => {
       if (!user) {
-        res.staus(400).json({ errorMessage: "Please provide name and bio for the user." });
+        res
+          .staus(400)
+          .json({ errorMessage: "Please provide name and bio for the user." });
       } else {
         res.status(200).json({ message: "added to DB" });
       }
@@ -79,20 +78,36 @@ app.post("/users", async (req, res) => {
       });
     });
 });
+
+app.put("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const payload = req.body;
+  helpers.update(id, payload).then((user, id) => {
+    if (!user) {
+      res
+        .status(404)
+        .json({ message: "The user with the specified ID does not exist." });
+    } else if (!id) {
+      res.status(400).json({ message: "updated" });
+    } else {
+      res
+        .status(200)
+        .json({ message: "success"+ id });
+    }
+  });
+});
 app.delete("/users/:id", async (req, res) => {
   const { id } = req.params;
-  helpers
-    .remove(id)
-    .then(user => {
-      if (!user) {
-        res.status(404).json({  message: "The user with the specified ID does not exist."  });
-      } else {
-       
-        res.status(204).json({ message: "Removed from DB" });
-      }
-    })
-  })
-
+  helpers.remove(id).then(id => {
+    if (!id) {
+      res
+        .status(404)
+        .json({ message: "The user with the specified ID does not exist." });
+    } else {
+      res.status(204).json({ message: "Removed from DB" });
+    }
+  });
+});
 // STEP 7 make the express app listen on PORT
 app.listen(PORT, () => {
   console.log(`Great! Listening on ${PORT}`);
