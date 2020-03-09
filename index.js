@@ -52,8 +52,7 @@ app.post("/users", async (req, res) => {
           .staus(400)
           .json({ errorMessage: "Please provide name and bio for the user." });
       } else {
-        console.log("lady gaga" + {});
-        res.status(200).json(payload);
+             res.status(200).json(payload);
       }
     })
     .catch(error => {
