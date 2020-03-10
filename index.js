@@ -12,13 +12,13 @@ const PORT = 3333;
 // STEP 7 make  endpoints
 
 //GET all
-app.get("/users", async (req, res) => {
+app.get("/api/users", async (req, res) => {
   const users = await helpers.find();
   console.log(users);
   res.status(200).json({ users });
 });
 // GET by Id
-app.get("/users/:id", (req, res) => {
+app.get("/api/users/:id", (req, res) => {
   // the id can be found inside req.params.id
   const { id } = req.params;
   helpers
@@ -42,7 +42,7 @@ app.get("/users/:id", (req, res) => {
     });
 });
 // POST new thing (insert)
-app.post("/users", async (req, res) => {
+app.post("/api/users", async (req, res) => {
   const payload = req.body;
   helpers
     .insert(payload)
@@ -63,7 +63,7 @@ app.post("/users", async (req, res) => {
     });
 });
 //PUT edit thing (update)
-app.put("/users/:id", async (req, res) => {
+app.put("/api/users/:id", async (req, res) => {
   const { id } = req.params;
   const payload = req.body;
   helpers.update(id, payload).then((user, id) => {
@@ -76,20 +76,30 @@ app.put("/users/:id", async (req, res) => {
     } else {
       res.status(200).json({ message: "success" });
     }
+  }).catch(error => {
+    console.log(error);
+    res.status(500).json({
+      error: "could not update user"
+    });
   });
 });
 
 //Delete thing (update)
-app.delete("/users/:id", async (req, res) => {
+app.delete("/api/users/:id", async (req, res) => {
   const { id } = req.params;
-  helpers.remove(id).then(id => {
-    if (!id) {
+  helpers.remove(id).then(user => {
+    if (!user) {
       res
         .status(404)
         .json({ message: "The user with the specified ID does not exist." });
     } else {
       res.status(204).json({ message: "Removed from DB" });
     }
+  }).catch(error => {
+    console.log(error);
+    res.status(500).json({
+      error: "could not create user"
+    });
   });
 });
 // STEP 6 make the express app listen on PORT
